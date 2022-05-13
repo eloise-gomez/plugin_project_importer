@@ -44,13 +44,19 @@ class MyRunnable(Runnable):
         code_env_to_create = remote_client.get_code_env('PYTHON', external_code_env['envName'])
         pythonInterpreter = code_env_to_create.get_definition()["desc"]["pythonInterpreter"]
         code_env = local_client.create_code_env('PYTHON', external_code_env['envName'], 'DESIGN_MANAGED', {"pythonInterpreter": pythonInterpreter})
+        
+        external_code_env_definition = remote_client.get_code_env('PYTHON', external_code_env['envName'])
+
+        packages = external_code_env_definition.get_definition()['specPackageList'].split('\n')
+        packages = '\n'.join(map(str, packages))
+
+        
         # Setup packages to install
         definition = code_env.get_definition()
         definition["desc"]["installCorePackages"] = True
         definition["desc"]["installJupyterSupport"] = True
         # install package
-        definition["specPackageList"] = ""
-
+        definition["specPackageList"] = packages
         #Save the new settings
         code_env.set_definition(definition)
 
@@ -91,9 +97,6 @@ class MyRunnable(Runnable):
         
         # Create codenv
         for codenv in codenvs_to_create:
-            print('--------------------------')
-            print(codenv)
-            print('--------------------------')
             self.create_codenv_instance(codenv, remote_client, local_client)
 
         # Create Bundle on local instance
@@ -132,3 +135,4 @@ class MyRunnable(Runnable):
 
         html += '</div>'
         return html
+
