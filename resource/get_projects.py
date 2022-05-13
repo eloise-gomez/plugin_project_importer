@@ -9,5 +9,5 @@ def do(payload, config, plugin_config, inputs):
     projects = remote_client.list_projects()
     choices = []
     for project in projects:
-        choices.append({"value": project.get('projectKey'), "label": project.get('projectKey')})
+        choices.append({"value": project.get('projectKey'), "label": project.get('name')})
     return {"choices": choices}
