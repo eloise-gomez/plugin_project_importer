@@ -11,6 +11,7 @@
     "extension": "txt",
     "mimeType": "text/plain",
     "macroRoles": [],
+    "paramsPythonSetup": "get_projects.py",
     "params": [
         {
             "name": "remote_host",
@@ -31,7 +32,8 @@
         {
             "name": "project_to_import",
             "label": "Project ID",
-            "type": "STRING",
+            "type": "SELECT",
+            "getChoicesFromPython": true,
             "description": "Specify the project you want to import (Required)",
             "mandatory": true
         },
@@ -44,3 +46,4 @@
         }
     ]
 }
+
