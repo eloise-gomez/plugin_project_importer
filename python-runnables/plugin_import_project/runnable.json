@@ -14,22 +14,6 @@
     "paramsPythonSetup": "get_projects.py",
     "params": [
         {
-            "name": "remote_host",
-            "label": "Source Instance Address",
-            "type": "STRING",
-            "defaultValue": "https://se-global-demo-platform-ref.emea.dataiku-sandbox.io/",
-            "description": "Specify the location (URL) of the instance to copy the project to. (Required)",
-            "mandatory": true
-        },
-        {
-            "name": "api_key",
-            "label": "Remote API key",
-            "type": "STRING",
-            "defaultValue": "P0BRG0EVW8WXU3OELV53MG0QPDSV9S23",
-            "description": "Specify the API key of the destination instance. (Required)",
-            "mandatory": true
-        },
-        {
             "name": "project_to_import",
             "label": "Project ID",
             "type": "SELECT",
