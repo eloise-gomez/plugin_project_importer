@@ -65,21 +65,13 @@ class MyRunnable(Runnable):
         code_env.set_jupyter_support(True)  
 
 
-    def run(self, progress_callback):
-        remote_host = self.config.get("remote_host", "")
-        if remote_host == "":
-            raise Exception("destination is required")
-
-        remote_apiKey = self.config.get("api_key", "")
-        if remote_apiKey == "":
-            raise Exception("API key is required")
-        
+    def run(self, progress_callback):        
         project_to_import = self.config.get("project_to_import", "")
         if project_to_import == "":
             raise Exception("Project id is required")
 
         # use public python api to get access to remote host
-        remote_client = dataikuapi.DSSClient(remote_host, remote_apiKey)
+        remote_client = dataikuapi.DSSClient('https://se-global-demo-platform-ref.emea.dataiku-sandbox.io/', 'P0BRG0EVW8WXU3OELV53MG0QPDSV9S23')
 
         # ignore SSL Certificates if selected
         if self.config.get("ignore_ssl_certs"):
