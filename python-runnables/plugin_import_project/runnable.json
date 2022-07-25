@@ -15,7 +15,7 @@
     "params": [
         {
             "name": "project_to_import",
-            "label": "Project ID",
+            "label": "Project name",
             "type": "SELECT",
             "getChoicesFromPython": true,
             "description": "Specify the project you want to import (Required)",
