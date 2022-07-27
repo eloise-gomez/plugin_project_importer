@@ -76,7 +76,7 @@ class MyRunnable(Runnable):
             if project_to_import in projects:
                 return '\n Project already exists on your instance'
         except:
-            return '\n Could not established connection with your instance remote host or api key not correct
+            return '\n Could not established connection with your instance remote host or api key not correct'
 
         # use public python api to get access to remote host
         remote_client = dataikuapi.DSSClient('https://se-global-demo-platform-ref.emea.dataiku-sandbox.io/', 'P0BRG0EVW8WXU3OELV53MG0QPDSV9S23')
