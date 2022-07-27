@@ -67,8 +67,16 @@ class MyRunnable(Runnable):
 
     def run(self, progress_callback):        
         project_to_import = self.config.get("project_to_import", "")
+        local_client = dataiku.api_client()
+        
         if project_to_import == "":
             raise Exception("Project id is required")
+        try:
+            projects = local_client.list_project_keys()
+            if project_to_import in projects:
+                return '\n Project already exists on your instance'
+        except:
+            return '\n Could not established connection with your instance remote host or api key not correct
 
         # use public python api to get access to remote host
         remote_client = dataikuapi.DSSClient('https://se-global-demo-platform-ref.emea.dataiku-sandbox.io/', 'P0BRG0EVW8WXU3OELV53MG0QPDSV9S23')
@@ -78,8 +86,6 @@ class MyRunnable(Runnable):
             remote_client._session.verify = False
 
         html = '<div> Successfully connected to remote host: %s</div>' %(remote_client.host)
-
-        local_client = dataiku.api_client()
         now = datetime.now()
         today = now.strftime("%d-%m-%Y_%H-%M")
         
@@ -90,40 +96,20 @@ class MyRunnable(Runnable):
         # Create codenv
         for codenv in codenvs_to_create:
             self.create_codenv_instance(codenv, remote_client, local_client)
+        version_bundle = "latest"
+        #Export bundle
+        project = remote_client.get_project(project_id)
+        #project.export_bundle(version_bundle)
+        remote_client.download_exported_bundle_archive_to_file(version_bundle, "temp_bundle.zip")
 
-        # Create Bundle on local instance
-        project = remote_client.get_project(project_to_import)
-        project.export_bundle(project_to_import + "_bundle-" + today)
-        project.download_exported_bundle_archive_to_file(project_to_import + "_bundle-" + today,
-                                                         project_to_import + "_bundle-"+ today+".zip")
-        html += "<div> Bundle " + project_to_import + "_bundle-" + today +" was created"
-
-        # Import bundle on remote instance
-        if not (os.path.exists(project_to_import + "_bundle-" + today + ".zip")):
-            html += "<div> Bundle file named ", project_to_import + "_bundle-" + today +".zip does not exist, cancelling"
-            sys.exit(1)
-            
-        bundle_file_stream = open(project_to_import + "_bundle-" + today+".zip", 'rb')
-        
-        if project_to_import in local_client.list_project_keys():
-            test_project = remote_client.get_project(project_to_import)
-            test_project.import_bundle_from_stream(bundle_file_stream)
-        else:
-            local_client.create_project_from_bundle_archive(bundle_file_stream)
-            test_project = local_client.get_project(project_to_import)
-
-        # Activate Bundle
-        latest_bundle = test_project.list_imported_bundles()["bundles"][-1]["bundleId"]
-        html += "<div> Using latest bundle defined as " + latest_bundle
-
-        preload_result = test_project.preload_bundle(latest_bundle)
-        print("Preload result =", json.dumps(preload_result, indent=4))
-        try:
-            activation_result = test_project.activate_bundle(latest_bundle)
-            html += "<div> Activation result = " + json.dumps(activation_result, indent=4)
-        except:
-            html += "<div> Exception when activating bundle, cancelling operation"
-            sys.exit(1)
+        #Import bundle
+        bundle_file_stream = open("temp_bundle.zip", 'rb')
+        local_client.create_project_from_bundle_archive(bundle_file_stream)
+        test_project = local_client.get_project(project_id)
+        test_project.preload_bundle(version_bundle) # for code envs
+        test_project.activate_bundle(version_bundle)
+        os.remove("temp_bundle.zip")
+        return 'Successfully imported project'
 
         html += '</div>'
         return html
