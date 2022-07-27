@@ -98,14 +98,14 @@ class MyRunnable(Runnable):
             self.create_codenv_instance(codenv, remote_client, local_client)
         version_bundle = "latest"
         #Export bundle
-        project = remote_client.get_project(project_id)
+        project = remote_client.get_project(project_to_import)
         #project.export_bundle(version_bundle)
         remote_client.download_exported_bundle_archive_to_file(version_bundle, "temp_bundle.zip")
 
         #Import bundle
         bundle_file_stream = open("temp_bundle.zip", 'rb')
         local_client.create_project_from_bundle_archive(bundle_file_stream)
-        test_project = local_client.get_project(project_id)
+        test_project = local_client.get_project(project_to_import)
         test_project.preload_bundle(version_bundle) # for code envs
         test_project.activate_bundle(version_bundle)
         os.remove("temp_bundle.zip")
