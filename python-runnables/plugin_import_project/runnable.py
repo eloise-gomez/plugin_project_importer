@@ -100,7 +100,7 @@ class MyRunnable(Runnable):
         #Export bundle
         project = remote_client.get_project(project_to_import)
         #project.export_bundle(version_bundle)
-        remote_client.download_exported_bundle_archive_to_file(version_bundle, "temp_bundle.zip")
+        project.download_exported_bundle_archive_to_file(version_bundle, "temp_bundle.zip")
 
         #Import bundle
         bundle_file_stream = open("temp_bundle.zip", 'rb')
